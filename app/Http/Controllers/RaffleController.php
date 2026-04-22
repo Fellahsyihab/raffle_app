@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Prize;
 use App\Models\Participant;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ParticipantsExport;
 
 class RaffleController extends Controller
 {
@@ -79,5 +82,25 @@ class RaffleController extends Controller
         $participants = $query->orderBy('created_at', 'desc')->paginate(20);
 
         return view('admin.index', compact('participants'));
+    }
+
+    public function exportExcel(Request $request) 
+    {
+        return Excel::download(new ParticipantsExport($request->date), 'data-peserta-raffle.xlsx');
+    }
+
+    public function exportPdf(Request $request) 
+    {
+        $date = $request->date;
+        $query = \App\Models\Participant::latest();
+        
+        if ($date) {
+            $query->whereDate('created_at', $date);
+        }
+        
+        $participants = $query->get();
+        
+        $pdf = Pdf::loadView('admin.export-pdf', compact('participants', 'date'));
+        return $pdf->download('laporan-raffle-'.($date ?? 'all').'.pdf');
     }
 }

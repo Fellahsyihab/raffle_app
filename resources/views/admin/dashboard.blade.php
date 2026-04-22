@@ -87,7 +87,16 @@
                     <tbody class="divide-y divide-slate-100 text-sm">
                         @foreach($prizes as $prize)
                         <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4 font-semibold text-slate-700">{{ $prize->name }}</td>
+                            <td class="px-6 py-4">
+                                <form action="{{ route('admin.edit.name', $prize->id) }}" method="POST" class="flex items-center gap-2 group">
+                                    @csrf
+                                    <input type="text" name="name" value="{{ $prize->name }}" 
+                                        class="bg-transparent border-none focus:ring-2 focus:ring-blue-500 rounded px-2 py-1 font-semibold text-slate-700 w-full transition-all group-hover:bg-white group-hover:shadow-sm">
+                                    <button type="submit" class="hidden group-hover:block text-blue-500 hover:text-blue-700">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"></path></svg>
+                                    </button>
+                                </form>
+                            </td>
                             <td class="px-6 py-4 text-center font-mono font-bold">{{ $prize->stock }}</td>
                             <td class="px-6 py-4 text-center">
                                 <span class="px-3 py-1 rounded-full text-[10px] font-bold {{ $prize->stock > 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600' }}">
@@ -95,13 +104,23 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4">
-                                <form action="{{ route('admin.update', $prize->id) }}" method="POST" class="flex justify-end gap-2">
-                                    @csrf
-                                    <input type="number" name="stock" value="{{ $prize->stock }}" class="w-16 bg-slate-100 border-none rounded-lg text-center text-xs font-bold py-1">
-                                    <button type="submit" class="bg-slate-800 text-white p-1.5 rounded-lg hover:bg-blue-600 transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                                    </button>
-                                </form>
+                                <div class="flex justify-end items-center gap-3">
+                                    <form action="{{ route('admin.update', $prize->id) }}" method="POST" class="flex gap-1">
+                                        @csrf
+                                        <input type="number" name="stock" value="{{ $prize->stock }}" class="w-16 bg-slate-100 border-none rounded-lg text-center text-xs font-bold py-1 focus:ring-2 focus:ring-blue-500">
+                                        <button type="submit" title="Update Stok" class="bg-slate-800 text-white p-1.5 rounded-lg hover:bg-blue-600 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('admin.delete', $prize->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus asset ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" title="Hapus Asset" class="text-slate-300 hover:text-rose-600 transition-colors">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @endforeach
